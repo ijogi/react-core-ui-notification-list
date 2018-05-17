@@ -1,0 +1,1 @@
+React notification list component based on React Core UI
