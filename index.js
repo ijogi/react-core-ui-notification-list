@@ -1,151 +1,229 @@
-import React, { PureComponent } from 'react';
-import propTypes from 'prop-types';
-import { Button, ButtonGroup, ButtonDropdown, Card, CardHeader, CardBody, CardTitle, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
+'use strict';
 
-import NotificationListItem from './NotificationListItem';
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-class NotificationList extends PureComponent {
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-  constructor(props) {
-    super(props);
+var _react = require('react');
 
-    this.state = {
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _reactstrap = require('reactstrap');
+
+require('./styles.css');
+
+var _NotificationListItem = require('./NotificationListItem');
+
+var _NotificationListItem2 = _interopRequireDefault(_NotificationListItem);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var NotificationList = function (_PureComponent) {
+  _inherits(NotificationList, _PureComponent);
+
+  function NotificationList(props) {
+    _classCallCheck(this, NotificationList);
+
+    var _this = _possibleConstructorReturn(this, (NotificationList.__proto__ || Object.getPrototypeOf(NotificationList)).call(this, props));
+
+    _this.toggle = function () {
+      var dropdownOpen = _this.state.dropdownOpen;
+
+      _this.setState({
+        dropdownOpen: !dropdownOpen
+      });
+    };
+
+    _this.handleMarkAllItemsAsRead = function () {
+      var items = _this.props.items;
+
+      _this.props.handleMarkAllItemsAsRead(items);
+    };
+
+    _this.handleMarkAllItemsAsArchived = function () {
+      var items = _this.props.items;
+
+      _this.props.handleMarkAllItemsAsArchived(items);
+    };
+
+    _this.state = {
       sortBy: 'date',
       sortDesc: false,
       dropdownOpen: false
+    };
+    return _this;
+  }
+
+  _createClass(NotificationList, [{
+    key: 'compare',
+    value: function compare(a, b, propIn1, propIn2) {
+      var prop1 = null;
+      var prop2 = null;
+      if (this.state.sortDesc) {
+        prop1 = !!propIn2 ? b[propIn1][propIn2] : b[propIn1];
+        prop2 = !!propIn2 ? a[propIn1][propIn2] : a[propIn1];
+      } else {
+        prop1 = !!propIn2 ? a[propIn1][propIn2] : a[propIn1];
+        prop2 = !!propIn2 ? b[propIn1][propIn2] : b[propIn1];
+      }
+
+      var comparison = 0;
+      if (prop1 > prop2) {
+        comparison = 1;
+      } else if (prop1 < prop2) {
+        comparison = -1;
+      }
+      return comparison;
     }
-  }
+  }, {
+    key: 'handleSort',
+    value: function handleSort(fieldName) {
+      var sortDesc = this.state.sortDesc;
 
-  compare(a, b, propIn1, propIn2) {
-    let prop1 = null;
-    let prop2 = null;
-    if (this.state.sortDesc) {
-      prop1 = !!propIn2 ? b[propIn1][propIn2] : b[propIn1];
-      prop2 = !!propIn2 ? a[propIn1][propIn2] : a[propIn1];
-    } else {
-      prop1 = !!propIn2 ? a[propIn1][propIn2] : a[propIn1];
-      prop2 = !!propIn2 ? b[propIn1][propIn2] : b[propIn1];
+      this.setState({ sortBy: fieldName, sortDesc: !sortDesc });
     }
+  }, {
+    key: 'renderSortingButtons',
+    value: function renderSortingButtons() {
+      var _this2 = this;
 
-    let comparison = 0;
-    if (prop1 > prop2) {
-      comparison = 1;
-    } else if (prop1 < prop2) {
-      comparison = -1;
+      var sortableFields = this.props.sortableFields;
+
+      return _react2.default.createElement(
+        _reactstrap.ButtonDropdown,
+        { isOpen: this.state.dropdownOpen, toggle: this.toggle },
+        _react2.default.createElement(
+          _reactstrap.DropdownToggle,
+          { caret: true },
+          'Sort by'
+        ),
+        _react2.default.createElement(
+          _reactstrap.DropdownMenu,
+          null,
+          sortableFields.map(function (field) {
+            return _react2.default.createElement(
+              _reactstrap.DropdownItem,
+              { onClick: function onClick() {
+                  return _this2.handleSort(field.title);
+                }, key: field.title },
+              'Sort by ',
+              field.title
+            );
+          })
+        )
+      );
     }
-    return comparison;
-  }
+  }, {
+    key: 'renderTableItems',
+    value: function renderTableItems() {
+      var _this3 = this;
 
-  toggle = () => {
-    const { dropdownOpen } = this.state;
-    this.setState({
-      dropdownOpen: !dropdownOpen
-    });
-  }
+      var items = this.props.items;
+      var sortableFields = this.props.sortableFields;
+      var sortBy = this.state.sortBy;
 
-  handleMarkAllItemsAsRead = () => {
-    const { items } = this.props;
-    this.props.handleMarkAllItemsAsRead(items);
-  }
+      var sortableProperty = sortableFields.find(function (f) {
+        return f.title === sortBy;
+      });
 
-  handleMarkAllItemsAsArchived = () => {
-    const { items } = this.props;
-    this.props.handleMarkAllItemsAsArchived(items);
-  }
+      return _react2.default.createElement(
+        'ul',
+        { className: 'messages' },
+        items.sort(function (a, b) {
+          return _this3.compare(b, a, sortBy, sortableProperty ? sortableProperty.sortByProp : null);
+        }).map(function (item) {
+          return _react2.default.createElement(_NotificationListItem2.default, {
+            item: Object.assign({}, item),
+            priorityClasses: _this3.props.priorityClasses,
+            handleMarkAsArchived: _this3.props.handleMarkAsArchived,
+            handleMarkAsRead: _this3.props.handleMarkAsRead,
+            key: item.id });
+        })
+      );
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _props = this.props,
+          icon = _props.icon,
+          title = _props.title;
 
-
-  handleSort(fieldName) {
-    const { sortDesc } = this.state;
-    this.setState({ sortBy: fieldName, sortDesc: !sortDesc });
-  }
-
-  renderSortingButtons() {
-    const { sortableFields } = this.props;
-    return (
-      <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-        <DropdownToggle caret>
-          Sort by
-      </DropdownToggle>
-        <DropdownMenu>
-          {
-            sortableFields.map(field => {
-              return <DropdownItem onClick={() => this.handleSort(field.title)} key={field.title}>
-                Sort by {field.title}
-              </DropdownItem >
-            })
-          }
-        </DropdownMenu>
-      </ButtonDropdown>
-    )
-  }
-
-  renderTableItems() {
-    const { items } = this.props;
-    const { sortableFields } = this.props;
-    const { sortBy } = this.state;
-    const sortableProperty = sortableFields.find(f => f.title === sortBy);
-
-    return (
-      <ul className="messages">
-        {
-          items
-            .sort((a, b) => this.compare(b, a, sortBy, sortableProperty ? sortableProperty.sortByProp : null))
-            .map(item => {
-              return (
-                <NotificationListItem
-                  item={Object.assign({}, item)}
-                  priorityClasses={this.props.priorityClasses}
-                  handleMarkAsArchived={this.props.handleMarkAsArchived}
-                  handleMarkAsRead={this.props.handleMarkAsRead}
-                  key={item.id} />
+      return _react2.default.createElement(
+        _reactstrap.Card,
+        null,
+        _react2.default.createElement(
+          _reactstrap.CardHeader,
+          null,
+          icon && _react2.default.createElement('i', { className: icon }),
+          ' ',
+          title
+        ),
+        _react2.default.createElement(
+          _reactstrap.CardBody,
+          null,
+          _react2.default.createElement(
+            _reactstrap.CardTitle,
+            null,
+            this.renderSortingButtons(),
+            _react2.default.createElement(
+              _reactstrap.ButtonGroup,
+              null,
+              this.handleMarkAllItemsAsRead && _react2.default.createElement(
+                _reactstrap.Button,
+                { color: 'success', onClick: this.handleMarkAllItemsAsRead },
+                _react2.default.createElement('i', { className: 'fa fa-envelope-open-o' }),
+                ' Mark all as read'
+              ),
+              this.handleMarkAllItemsAsArchived && _react2.default.createElement(
+                _reactstrap.Button,
+                { color: 'success', onClick: this.handleMarkAllItemsAsArchived },
+                _react2.default.createElement('i', { className: 'fa fa-archive' }),
+                ' Mark all as archived'
               )
-            })
-        }
-      </ul>
-    )
-  }
+            )
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'animated fadeIn' },
+            _react2.default.createElement(
+              'div',
+              { className: 'email-app mb-4', style: { border: 'none' } },
+              _react2.default.createElement(
+                'main',
+                { className: 'inbox' },
+                this.renderTableItems()
+              )
+            )
+          )
+        )
+      );
+    }
+  }]);
 
-
-
-  render() {
-    const { icon, title } = this.props;
-    return (
-      <Card>
-          <CardHeader>
-            {icon && <i className={icon}></i>} {title}
-          </CardHeader>
-          <CardBody>
-            <CardTitle>
-              {this.renderSortingButtons()}
-              <ButtonGroup>
-                {this.handleMarkAllItemsAsRead && <Button color="success" onClick={this.handleMarkAllItemsAsRead}><i className="fa fa-envelope-open-o"></i> Mark all as read</Button>}
-                {this.handleMarkAllItemsAsArchived && <Button color="success" onClick={this.handleMarkAllItemsAsArchived}><i className="fa fa-archive"></i> Mark all as archived</Button>}
-              </ButtonGroup>
-            </CardTitle>
-
-            <div className="animated fadeIn">
-              <div className="email-app mb-4" style={{ border: 'none' }}>
-                <main className="inbox">
-                  {this.renderTableItems()}
-                </main>
-              </div>
-            </div>
-          </CardBody>
-      </Card>
-
-    )
-  }
-}
+  return NotificationList;
+}(_react.PureComponent);
 
 NotificationList.propTypes = {
-  title: propTypes.string.isRequired,
-  icon: propTypes.string,
-  items: propTypes.array.isRequired,
-  priorityClasses: propTypes.instanceOf(Map).isRequired,
-  handleMarkAsArchived: propTypes.func,
-  handleMarkAllItemsAsArchived: propTypes.func,
-  handleMarkAsRead: propTypes.func,
-  handleMarkAllItemsAsRead: propTypes.func
-}
+  title: _propTypes2.default.string.isRequired,
+  icon: _propTypes2.default.string,
+  items: _propTypes2.default.array.isRequired,
+  priorityClasses: _propTypes2.default.instanceOf(Map).isRequired,
+  handleMarkAsArchived: _propTypes2.default.func,
+  handleMarkAllItemsAsArchived: _propTypes2.default.func,
+  handleMarkAsRead: _propTypes2.default.func,
+  handleMarkAllItemsAsRead: _propTypes2.default.func
+};
 
-export default NotificationList;
+exports.default = NotificationList;
