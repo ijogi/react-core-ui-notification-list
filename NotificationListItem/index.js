@@ -29,46 +29,63 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var NotificationListItem = function (_PureComponent) {
     _inherits(NotificationListItem, _PureComponent);
 
-    function NotificationListItem() {
-        var _ref;
-
-        var _temp, _this, _ret;
-
+    function NotificationListItem(props) {
         _classCallCheck(this, NotificationListItem);
 
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-            args[_key] = arguments[_key];
-        }
+        var _this = _possibleConstructorReturn(this, (NotificationListItem.__proto__ || Object.getPrototypeOf(NotificationListItem)).call(this, props));
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = NotificationListItem.__proto__ || Object.getPrototypeOf(NotificationListItem)).call.apply(_ref, [this].concat(args))), _this), _this.handleMarkAsRead = function () {
-            var item = _this.props.item;
+        _this.handleAction = function (func, item) {
+            var resp = func(item);
+            if (resp.isSuccess) {
+                _this.setState({ successMessage: resp.message });
+                setTimeout(function () {
+                    return _this.setState({ successMessage: null });
+                }, 3000);
+            } else {
+                _this.setState({ errorMessage: resp.message });
+                setTimeout(function () {
+                    return _this.setState({ errorMessage: null });
+                }, 3000);
+            }
+        };
 
-            _this.props.handleMarkAsRead(item);
-        }, _this.handleMarkAsArchived = function () {
-            var item = _this.props.item;
-
-            _this.props.handleMarkAsArchived(item);
-        }, _temp), _possibleConstructorReturn(_this, _ret);
+        _this.state = {
+            successMessage: null,
+            errorMessage: null
+        };
+        return _this;
     }
 
     _createClass(NotificationListItem, [{
-        key: 'truncateText',
-        value: function truncateText(text, truncateLength) {
-            if (text.length > truncateLength) {
-                return text.substring(0, truncateLength) + '...';
+        key: 'renderActions',
+        value: function renderActions(item) {
+            var _this2 = this;
+
+            if (item.type && item.type.actions) {
+                return _react2.default.createElement(
+                    'div',
+                    null,
+                    item.type.actions.map(function (action) {
+                        return _react2.default.createElement(
+                            _reactstrap.Button,
+                            { key: action.icon, color: action.color, onClick: function onClick() {
+                                    return _this2.handleAction(action.func, item);
+                                } },
+                            _react2.default.createElement('i', { className: action.icon }),
+                            ' ',
+                            action.name
+                        );
+                    })
+                );
             }
-            return text;
+            return _react2.default.createElement('div', null);
         }
     }, {
-        key: 'render',
-        value: function render() {
-            var _props = this.props,
-                item = _props.item,
-                priorityClasses = _props.priorityClasses;
-
+        key: 'renderListItem',
+        value: function renderListItem(item, priorityClasses) {
             return _react2.default.createElement(
-                'li',
-                { className: !item.isRead ? "message unread" : "message", style: { cursor: 'default' } },
+                'div',
+                null,
                 _react2.default.createElement(
                     'div',
                     { className: 'header' },
@@ -89,6 +106,11 @@ var NotificationListItem = function (_PureComponent) {
                                 ' ',
                                 item.title
                             )
+                        ),
+                        item.alert && _react2.default.createElement(
+                            _reactstrap.Alert,
+                            { color: item.alert.color },
+                            item.alert.text
                         )
                     ),
                     _react2.default.createElement(
@@ -112,7 +134,7 @@ var NotificationListItem = function (_PureComponent) {
                         null,
                         item.sender && item.sender.avatarUrl && _react2.default.createElement(
                             _reactstrap.Media,
-                            { left: true, href: '#' },
+                            null,
                             _react2.default.createElement(_reactstrap.Media, { object: true, src: item.sender.avatarUrl, alt: 'Client avatar', style: { height: '3rem' } })
                         ),
                         _react2.default.createElement(
@@ -133,24 +155,46 @@ var NotificationListItem = function (_PureComponent) {
                             _react2.default.createElement(
                                 'p',
                                 { style: item.sender && item.sender.avatarUrl && { margin: '0 0.5rem' } },
-                                this.truncateText(item.body, 250)
+                                item.text
                             )
                         )
                     )
+                )
+            );
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _state = this.state,
+                successMessage = _state.successMessage,
+                errorMessage = _state.errorMessage;
+            var _props = this.props,
+                item = _props.item,
+                priorityClasses = _props.priorityClasses;
+
+            return _react2.default.createElement(
+                'li',
+                { className: !item.isRead ? "message unread" : "message", style: { cursor: 'default' } },
+                item.url && _react2.default.createElement(
+                    _reactRouterDom.Link,
+                    { to: item.url },
+                    this.renderListItem(item, priorityClasses)
                 ),
+                !item.url && this.renderListItem(item, priorityClasses),
                 _react2.default.createElement(
                     _reactstrap.ButtonGroup,
                     { size: 'sm', style: { padding: '0.2rem 0' } },
-                    this.handleMarkAsRead && _react2.default.createElement(
-                        _reactstrap.Button,
-                        { color: 'light', onClick: this.handleMarkAsRead },
-                        _react2.default.createElement('i', { className: 'fa fa-envelope-open-o' })
-                    ),
-                    this.handleMarkAsArchived && _react2.default.createElement(
-                        _reactstrap.Button,
-                        { color: 'light', onClick: this.handleMarkAsArchived },
-                        _react2.default.createElement('i', { className: 'fa fa-archive' })
-                    )
+                    this.renderActions(item)
+                ),
+                successMessage && _react2.default.createElement(
+                    'p',
+                    { className: 'text-success description animated fadeIn' },
+                    successMessage
+                ),
+                errorMessage && _react2.default.createElement(
+                    'p',
+                    { className: 'text-danger description animated fadeIn' },
+                    errorMessage
                 )
             );
         }
@@ -161,9 +205,7 @@ var NotificationListItem = function (_PureComponent) {
 
 NotificationListItem.propTypes = {
     item: _propTypes2.default.object.isRequired,
-    priorityClasses: _propTypes2.default.instanceOf(Map).isRequired,
-    handleMarkAsRead: _propTypes2.default.func,
-    handleMarkAsArchived: _propTypes2.default.func
+    priorityClasses: _propTypes2.default.instanceOf(Map).isRequired
 };
 
 exports.default = NotificationListItem;
