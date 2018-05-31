@@ -42,13 +42,13 @@ var NotificationListItem = function (_PureComponent) {
 
         _this.handleAction = function (func, item) {
             var resp = func(item);
-            if (resp.isSuccess) {
-                _this.setState({ successMessage: resp.message });
+            if (resp && resp.isSuccess) {
+                _this.setState({ successMessage: resp && resp.message ? resp.message : 'Done!' });
                 setTimeout(function () {
                     return _this.setState({ successMessage: null });
                 }, 3000);
             } else {
-                _this.setState({ errorMessage: resp.message });
+                _this.setState({ errorMessage: resp && resp.message ? resp.message : 'Something went wrong...' });
                 setTimeout(function () {
                     return _this.setState({ errorMessage: null });
                 }, 3000);

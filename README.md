@@ -2,6 +2,8 @@ React notification list component based on React Core UI
 
 Uses font-awesome for icons and reactstrap for some components
 
+To show success or error messages, event handlers should return an object with isSuccess flag to indicate wether an operation was successful and a message property with the text to be displayed
+
  Example of inputs:
 ```{
             title: 'Arrears',
