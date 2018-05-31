@@ -174,7 +174,9 @@ var NotificationList = function (_PureComponent) {
 
       var _props = this.props,
           sortableFields = _props.sortableFields,
-          emptyPage = _props.emptyPage;
+          emptyPage = _props.emptyPage,
+          priorityClasses = _props.priorityClasses,
+          truncateTextLength = _props.truncateTextLength;
       var _state = this.state,
           filteredItems = _state.filteredItems,
           sortBy = _state.sortBy;
@@ -191,7 +193,8 @@ var NotificationList = function (_PureComponent) {
           }).map(function (item) {
             return _react2.default.createElement(_NotificationListItem2.default, {
               item: Object.assign({}, item),
-              priorityClasses: _this4.props.priorityClasses,
+              priorityClasses: priorityClasses,
+              truncateTextLength: truncateTextLength,
               key: item.id });
           })
         );

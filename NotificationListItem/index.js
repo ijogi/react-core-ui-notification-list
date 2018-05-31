@@ -34,6 +34,12 @@ var NotificationListItem = function (_PureComponent) {
 
         var _this = _possibleConstructorReturn(this, (NotificationListItem.__proto__ || Object.getPrototypeOf(NotificationListItem)).call(this, props));
 
+        _this.expandText = function () {
+            var showFullText = _this.state.showFullText;
+
+            _this.setState({ showFullText: !showFullText });
+        };
+
         _this.handleAction = function (func, item) {
             var resp = func(item);
             if (resp.isSuccess) {
@@ -50,6 +56,7 @@ var NotificationListItem = function (_PureComponent) {
         };
 
         _this.state = {
+            showFullText: false,
             successMessage: null,
             errorMessage: null
         };
@@ -57,6 +64,16 @@ var NotificationListItem = function (_PureComponent) {
     }
 
     _createClass(NotificationListItem, [{
+        key: 'truncateText',
+        value: function truncateText(text, truncateLength) {
+            var showFullText = this.state.showFullText;
+
+            if (text.length > truncateLength && !showFullText) {
+                return text.substring(0, truncateLength) + '...';
+            }
+            return text;
+        }
+    }, {
         key: 'renderActions',
         value: function renderActions(item) {
             var _this2 = this;
@@ -78,11 +95,10 @@ var NotificationListItem = function (_PureComponent) {
                     })
                 );
             }
-            return _react2.default.createElement('div', null);
         }
     }, {
         key: 'renderListItem',
-        value: function renderListItem(item, priorityClasses) {
+        value: function renderListItem(item, priorityClasses, truncateTextLength) {
             return _react2.default.createElement(
                 'div',
                 null,
@@ -118,7 +134,7 @@ var NotificationListItem = function (_PureComponent) {
                         { className: 'date' },
                         _react2.default.createElement('span', { className: 'fa fa-paper-clip' }),
                         ' ',
-                        item.date.toString()
+                        item.date.displayDate
                     )
                 ),
                 _react2.default.createElement(
@@ -127,7 +143,7 @@ var NotificationListItem = function (_PureComponent) {
                     _react2.default.createElement(
                         'h6',
                         null,
-                        item.category
+                        item.category ? item.category.name : ''
                     ),
                     _react2.default.createElement(
                         _reactstrap.Media,
@@ -155,7 +171,7 @@ var NotificationListItem = function (_PureComponent) {
                             _react2.default.createElement(
                                 'p',
                                 { style: item.sender && item.sender.avatarUrl && { margin: '0 0.5rem' } },
-                                item.text
+                                item.text.length > truncateTextLength ? this.truncateText(item.text, 500) : item.text
                             )
                         )
                     )
@@ -167,20 +183,31 @@ var NotificationListItem = function (_PureComponent) {
         value: function render() {
             var _state = this.state,
                 successMessage = _state.successMessage,
-                errorMessage = _state.errorMessage;
+                errorMessage = _state.errorMessage,
+                showFullText = _state.showFullText;
             var _props = this.props,
                 item = _props.item,
-                priorityClasses = _props.priorityClasses;
+                priorityClasses = _props.priorityClasses,
+                truncateTextLength = _props.truncateTextLength;
 
             return _react2.default.createElement(
                 'li',
-                { className: !item.isRead ? "message unread" : "message", style: { cursor: 'default' } },
+                { className: !item.isRead ? "message unread" : "message" && (item.category && item.category.cssClass ? item.category.cssClass : ''), style: { cursor: 'default', padding: '0.3rem' } },
                 item.url && _react2.default.createElement(
                     _reactRouterDom.Link,
                     { to: item.url },
                     this.renderListItem(item, priorityClasses)
                 ),
-                !item.url && this.renderListItem(item, priorityClasses),
+                !item.url && this.renderListItem(item, priorityClasses, truncateTextLength),
+                item.text.length > truncateTextLength && _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        _reactstrap.Button,
+                        { color: 'link', size: 'sm', onClick: this.expandText },
+                        showFullText ? 'Less' : 'More'
+                    )
+                ),
                 _react2.default.createElement(
                     _reactstrap.ButtonGroup,
                     { size: 'sm', style: { padding: '0.2rem 0' } },
