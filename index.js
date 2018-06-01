@@ -577,7 +577,7 @@ var NotificationListItem = exports.NotificationListItem = function (_PureCompone
 
             return _react2.default.createElement(
                 'li',
-                { className: !item.isRead ? "message unread" : "message" && (item.category && item.category.cssClass ? item.category.cssClass : ''), style: { cursor: 'default', padding: '0.3rem' } },
+                { className: (item.category && item.category.cssClass ? item.category.cssClass : 'x') && (item.isRead ? "message unread" : "message"), style: { cursor: 'default', padding: '0.3rem' } },
                 item.url && _react2.default.createElement(
                     _reactRouterDom.Link,
                     { to: item.url },
