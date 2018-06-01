@@ -1,16 +1,16 @@
 {
-  "name": "notification-list",
-  "version": "0.0.0",
-  "main": "./index.js",
-  "dependencies": {
-    "bootstrap": "^4.1.1",
-    "font-awesome": "^4.7.0",
-    "prop-types": "^15.6.1",
-    "react-router-dom": "^4.2.2",
-    "reactstrap": "^5.0.0-alpha.4"
-  },
-  "devDependencies": {
-    "react-dom": "^16.3.2",
-    "font-awesome": "^4.7.0"
+    "name": "notification-list",
+    "version": "0.0.1",
+    "main": "./index.js",
+    "dependencies": {
+      "bootstrap": "^4.1.1",
+      "font-awesome": "^4.7.0",
+      "prop-types": "^15.6.1",
+      "react-router-dom": "^4.2.2",
+      "reactstrap": "^5.0.0-alpha.4"
+    },
+    "devDependencies": {
+      "react-dom": "^16.3.2"
+    }
   }
-}
+  

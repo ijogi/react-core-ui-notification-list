@@ -89,6 +89,7 @@ To show success or error messages, event handlers should return an object with i
                 { title: 'Archived', predicateFunc: (item) => item.isArchived }
             ],
             emptyPage: <Alert color="primary">All clear, nothing to see here...</Alert>,
-            truncateTextLength: 500
+            truncateTextLength: 500,
+            defaultSortBy: 'date'
         }
     }```
