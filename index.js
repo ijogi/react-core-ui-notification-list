@@ -513,12 +513,7 @@ var NotificationListItem = exports.NotificationListItem = function (_PureCompone
                         'span',
                         { className: 'date' },
                         _react2.default.createElement('span', { className: 'fa fa-paper-clip' }),
-                        _react2.default.createElement(
-                            'b',
-                            null,
-                            ' ',
-                            item.date.displayDate
-                        )
+                        item.date.displayDate
                     )
                 ),
                 _react2.default.createElement(
